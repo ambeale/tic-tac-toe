@@ -28,6 +28,43 @@ class Board:
 	def add_move(self, move):
 		self.current_board[move.position[0]][move.position[1]] = move.player.char
 
+	def is_winning(self, board):
+		rows = False
+
+		for line in board:
+			if ("X" not in line and "-" not in line) or ("O" not in line and "-" not in line):
+				rows = True
+
+		columns = False
+
+		for i in range(len(board)):
+			column_to_check = {}
+			
+			for j in range(len(board)):
+				column_to_check.add(board[j][i])
+
+			if ("X" not in column_to_check and "-" not in column_to_check) or ("O" not in column_to_check and "-" not in column_to_check):
+				columns = True
+
+		forward_diagonal = False
+
+		forward_diagonal_check = {}
+		for i in range(len(board)):
+			forward_diagonal_check.add(board[i][i])
+		if ("X" not in forward_diagonal_check and "-" not in forward_diagonal_check) or ("O" not in forward_diagonal_check and "-" not in forward_diagonal_check):
+				forward_diagonal = True
+
+		backward_diagonal = False
+
+		for i in range(len(board)):
+			backward_diagonal_check = {}
+			for j in range(0,len(board),-1):
+				backward_diagonal.add(board[j][i])
+
+			if ("X" not in backward_diagonal_check  and "-" not in backward_diagonal_check ) or ("O" not in backward_diagonal_check  and "-" not in backward_diagonal_check ):
+				backward_diagonal = True
+
+
 class Game:
 	
 	def __init__(self, board, player_1, player_2):
