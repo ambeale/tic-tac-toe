@@ -20,6 +20,7 @@ class Board:
 		self.current_board = [["-","-","-"],
 					  ["-","-","-"],
 					  ["-","-","-"]]
+		self.last_move = None
 
 	def display(self):
 		for line in self.current_board:
@@ -28,41 +29,47 @@ class Board:
 	def add_move(self, move):
 		self.current_board[move.position[0]][move.position[1]] = move.player.char
 
-	def is_winning(self, board):
-		rows = False
 
-		for line in board:
+	def is_winning(self, board):
+		
+
+		current_board = board.current_board
+
+		rows = False
+		columns = False
+		forward_diagonal = False
+		backward_diagonal = False
+
+		# check rows
+		for line in current_board:
 			if ("X" not in line and "-" not in line) or ("O" not in line and "-" not in line):
 				rows = True
 
-		columns = False
-
-		for i in range(len(board)):
-			column_to_check = {}
+		# check columns
+		for i in range(len(current_board)):
+			column_to_check = set()
 			
-			for j in range(len(board)):
-				column_to_check.add(board[j][i])
+			for j in range(len(current_board)):
+				column_to_check.add(current_board[j][i])
 
 			if ("X" not in column_to_check and "-" not in column_to_check) or ("O" not in column_to_check and "-" not in column_to_check):
 				columns = True
-
-		forward_diagonal = False
-
-		forward_diagonal_check = {}
-		for i in range(len(board)):
-			forward_diagonal_check.add(board[i][i])
+		
+		# check diagonals
+		forward_diagonal_check = set()
+		backward_diagonal_check = set()
+		
+		for i in range(len(current_board)):
+			forward_diagonal_check.add(current_board[i][i])
+			backward_diagonal_check.add(current_board[i][len(current_board)-1-i])
+		
 		if ("X" not in forward_diagonal_check and "-" not in forward_diagonal_check) or ("O" not in forward_diagonal_check and "-" not in forward_diagonal_check):
 				forward_diagonal = True
-
-		backward_diagonal = False
-
-		for i in range(len(board)):
-			backward_diagonal_check = {}
-			for j in range(0,len(board),-1):
-				backward_diagonal.add(board[j][i])
-
-			if ("X" not in backward_diagonal_check  and "-" not in backward_diagonal_check ) or ("O" not in backward_diagonal_check  and "-" not in backward_diagonal_check ):
+		if ("X" not in backward_diagonal_check  and "-" not in backward_diagonal_check) or ("O" not in backward_diagonal_check and "-" not in backward_diagonal_check):
 				backward_diagonal = True
+
+		# return if won
+		return rows or columns or forward_diagonal or backward_diagonal
 
 
 class Game:
@@ -106,6 +113,7 @@ def next_move(board, player):
 	
 	# TO DO: add condition if space is already picked
 
+	board.last_move = player.name
 	board.add_move(move)
 
 	return board
@@ -122,9 +130,25 @@ game = Game(board, player_1, player_2)
 
 board.display()
 
-board = next_move(board, player_1)
+while not board.is_winning(board):
+	# TO DO: Add condition that board is full
 
-board.display()
+	if board.last_move == player_2.name or board.last_move is None:
+		board = next_move(board, player_1)
+	else:
+		board = next_move(board, player_2)
+
+	board.display()
+
+	print(board.is_winning(board))
+
+
+if board.last_move == player_1.name:
+	winner = player_1.name
+else:
+	winner = player_2.name
+
+print("{} wins!".format(winner))
 
 
 
