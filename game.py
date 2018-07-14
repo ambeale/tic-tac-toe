@@ -27,8 +27,8 @@ class Board:
         """ADD DOCSTRING"""
 
         self.current_board = [["-","-","-"],
-                      ["-","-","-"],
-                      ["-","-","-"]]
+                              ["-","-","-"],
+                              ["-","-","-"]]
         self.last_move = None
 
     def display(self):
@@ -42,21 +42,15 @@ class Board:
 
         self.current_board[move.position[0]][move.position[1]] = move.player.char
 
-
     def is_winning(self, board):
         """ADD DOCSTRING"""
 
         current_board = board.current_board
 
-        rows = False
-        columns = False
-        forward_diagonal = False
-        backward_diagonal = False
-
         # check rows
         for row in current_board:
             if ("X" not in row and "-" not in row) or ("O" not in row and "-" not in row):
-                rows = True
+                return True
 
         # check columns
         for i in range(len(current_board)):
@@ -66,7 +60,7 @@ class Board:
                 column_to_check.add(current_board[j][i])
 
             if ("X" not in column_to_check and "-" not in column_to_check) or ("O" not in column_to_check and "-" not in column_to_check):
-                columns = True
+                return True
         
         # check diagonals
         forward_diagonal_check = set()
@@ -77,13 +71,10 @@ class Board:
             backward_diagonal_check.add(current_board[i][len(current_board)-1-i])
 
         if forward_diagonal_check == {"X"} or forward_diagonal_check == {"O"}:
-            forward_diagonal = True
+            return True
 
         if backward_diagonal_check == {"X"} or backward_diagonal_check == {"O"}:
-            backward_diagonal = True
-
-        # return if won
-        return rows or columns or forward_diagonal or backward_diagonal
+            return True
 
 
 class Game:
