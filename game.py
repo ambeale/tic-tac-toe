@@ -39,13 +39,28 @@ class Board:
 
     def add_move(self, move):
         """ADD DOCSTRING"""
-
+   
         self.current_board[move.position[0]][move.position[1]] = move.player.char
 
-    def is_winning(self, board):
+    def is_full(self):
         """ADD DOCSTRING"""
 
-        current_board = board.current_board
+        current_board = self.current_board
+        remaining_rows = 0
+
+        for row in current_board:
+            if "-"  in row:
+                remaining_rows += 1
+
+        if remaining_rows == 0:
+            return True
+        else:
+            return False
+
+    def is_winning(self):
+        """ADD DOCSTRING"""
+
+        current_board = self.current_board
 
         # check rows
         for row in current_board:
@@ -93,20 +108,22 @@ class Game:
 def create_players():
     """ADD DOCSTRING"""
 
+    char_pairings = {"X":"O","O":"X"}
+
     # Create player1
     name_1 = input("Player 1, what is your name? > ")
-    char_1 = input("Would you like to be X or O? > ").upper()
+    char_1 = ""
+    
+    # Force player to choose valid input
+    while char_1 not in char_pairings:
+        char_1 = input("Would you like to be X or O? > ").upper()
     player_1 = Player(name_1, char_1)
 
     # Create player2
     name_2 = input("Player 2, what is your name? > ")
 
-    if char_1.lower() == "x":
-        print("{}, you are O.".format(name_2))
-        char_2 = "O"
-    else:
-        print("{}, you are X.".format(name_2))
-        char_2 = "X"
+    print("{}, you are {}.".format(name_2, char_pairings[char_1]))
+    char_2 = char_pairings[char_1]
 
     player_2 = Player(name_2, char_2)
 
@@ -115,12 +132,29 @@ def create_players():
 def next_move(board, player):
     """Next player picks a move"""
     
-    move_row = int(input("{}, pick row to place your {}. > ".format(player.name, player.char)))
-    move_column = int(input("Pick column in row {} to place your {}. > ".format(move_row, player.char)))
+    move_row = "move"
+    move_column = "move"
+
+    while not move_row.isnumeric():
+        move_row = input("{}, pick row to place your {}. > ".format(player.name, player.char))
+    while not move_column.isnumeric():   
+        move_column = input("Pick column in row {} to place your {}. > ".format(move_row, player.char))
+
+    move_row = int(move_row)
+    move_column = int(move_column)
 
     move = Move(player, (move_row, move_column))
     
-    # TO DO: add condition if space is already picked
+    # Check if move is out of bounds
+    if (move_row >= len(board.current_board) or
+        move_column >= len(board.current_board)):
+        print("Move out of bounds. Choose a valid move.")
+        return board
+
+    # Check if space is already used
+    if board.current_board[move_row][move_column] != "-":
+        print("Spot already played. Pick an unused space.")
+        return board
 
     board.last_move = player.name
     board.add_move(move)
@@ -141,8 +175,7 @@ if __name__ == "__main__":
     game = Game(board, player_1, player_2)
 
     # Play game
-    while not board.is_winning(board):
-        # TO DO: Add condition that board is full
+    while not board.is_winning() and not board.is_full():
 
         if board.last_move == player_2.name or board.last_move is None:
             board = next_move(board, player_1)
@@ -152,18 +185,8 @@ if __name__ == "__main__":
         board.display()
 
     # Display winner
-    if board.last_move == player_1.name:
-        winner = player_1.name
+    if board.is_winning == True:
+        print("{} wins!".format(board.last_move.player.name))
     else:
-        winner = player_2.name
+        print("Game over - it's a tie!")
 
-    print("{} wins!".format(winner))
-
-
-
-### END CONDITIONS ###
-
-# 1. The board is full
-#       "-" not in board.current_board
-#
-# 2. A player wins
