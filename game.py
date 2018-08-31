@@ -1,30 +1,28 @@
 from datetime import datetime
 
 class Player:
-    """ADD DOCSTRING"""
+    """A user playing tic-tac-toe"""
 
     def __init__(self, name, char):
-        """ADD DOCSTRING"""
         
         self.name = name
         self.char = char
 
 
 class Move:
-    """ADD DOCSTRING"""
+    """A move at (X,Y) by a player"""
     
     def __init__(self, player, position):
-        """ADD DOCSTRING"""
         
         self.player = player
         self.position = position
 
 
 class Board:
-    """ADD DOCSTRING"""
+    """3x3 board object"""
     
     def __init__(self):
-        """ADD DOCSTRING"""
+        """Create empty board"""
 
         self.current_board = [["-","-","-"],
                               ["-","-","-"],
@@ -32,24 +30,24 @@ class Board:
         self.last_move = None
 
     def display(self):
-        """ADD DOCSTRING"""
+        """Print out board"""
         
         for line in self.current_board:
             print(" ".join(line))
 
     def add_move(self, move):
-        """ADD DOCSTRING"""
+        """Add move at given (X,Y) position"""
    
         self.current_board[move.position[0]][move.position[1]] = move.player.char
 
     def is_full(self):
-        """ADD DOCSTRING"""
+        """Check if no moves remain on board"""
 
         current_board = self.current_board
         remaining_rows = 0
 
         for row in current_board:
-            if "-"  in row:
+            if "-"  in set(row):
                 remaining_rows += 1
 
         if remaining_rows == 0:
@@ -58,12 +56,13 @@ class Board:
             return False
 
     def is_winning(self):
-        """ADD DOCSTRING"""
+        """Check if current status of board contains a winning configuration"""
 
         current_board = self.current_board
 
         # check rows
         for row in current_board:
+            row = set(row)
             if ("X" not in row and "-" not in row) or ("O" not in row and "-" not in row):
                 return True
 
@@ -93,10 +92,9 @@ class Board:
 
 
 class Game:
-    """ADD DOCSTRING"""
+    """Initialize board, players, and start time"""
     
     def __init__(self, board, player_1, player_2):
-        """ADD DOCSTRING"""
 
         self.board = board
         self.player1 = player_1
@@ -106,7 +104,7 @@ class Game:
     
 
 def create_players():
-    """ADD DOCSTRING"""
+    """Assign names and characters to players"""
 
     char_pairings = {"X":"O","O":"X"}
 
@@ -163,7 +161,6 @@ def next_move(board, player):
 
 
 if __name__ == "__main__":
-    """ADD DOCSTRING"""
 
     # Create players
     (player_1, player_2) = create_players()
